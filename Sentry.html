@@ -1,0 +1,222 @@
+<!DOCTYPE HTML>
+<!--
+	Hyperspace by HTML5 UP
+	html5up.net | @ajlkn
+	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+-->
+<html>
+	<head>
+		<title>Sentry API</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<!--[if lte IE 8]><script src="assets/js/ie/html5shiv.js"></script><![endif]-->
+		<link rel="stylesheet" href="assets/css/main.css" />
+		<!--[if lte IE 9]><link rel="stylesheet" href="assets/css/ie9.css" /><![endif]-->
+		<!--[if lte IE 8]><link rel="stylesheet" href="assets/css/ie8.css" /><![endif]-->
+	</head>
+	<body>
+
+		<!-- Header -->
+			<header id="header">
+				<a href="index.html" class="title">NASA APIs</a>
+				<nav>
+					<ul>
+						<li><a href="NASAAPI.html">Home</a></li>
+						<li><a href="EPIC.html" class="active">EPIC API</a></li>
+						<li><a href="CAD.html">SSD-CNEOS CAD API</a></li>
+					</ul>
+				</nav>
+			</header>
+
+		<!-- Wrapper -->
+			<div id="wrapper">
+
+				<!-- Main -->
+					<section id="main" class="wrapper">
+						<div class="inner">
+							<h1 class="major">The Sentry API</h1>
+							<span><img src="images/cneos_fireballs_plot.png" style="width:900px;height:400px;display:block;margin:auto" alt="" /></span>
+							<div>
+							  <p>Above you can see reported fireball events, with each event's calculated total impact energy indicated by its relative size and by a color. These collision events are what the Sentry system 
+							  is in place to monitor and to predict. Many people fear an event like the estimated 6.2 mile (10 km) wide comet or asteroid that caused mass extinction on the Earth approximately 66 million years ago.
+							  The CAD API can let us know if any comets or asteroids will be in the neighborhood. Let's see how we can use the Sentry API to see if anything is expected to be visiting Earth!
+							  </p>
+							</div>
+							<div>
+							  <p>The first thing we want to do is prepare our GET request. The URL we will be using is:<br /><br />
+							    <code style="margin-left:40px">https://api.nasa.gov/SSD-CNEOS/Sentry?api_key=[#]</code>
+							  </p><br />
+							  <p>If you go to the <a href="https://api.nasa.gov/api.html#Sentry">NASA Sentry API site</a>, you will find there are 4 types of queries/modes:</p>
+							  <p style="margin-left:40px">Mode S-A summary table for available Sentry objects (the default if no parameters are entered):<br /> 
+							  <code style="margin-left:40px">https://api.nasa.gov/SSD-CNEOS/Sentry?api_key=[#]</code></p><br />
+							  <p style="margin-left:40px">Mode O-Object specific details (99942 is the des for 99942 Apophis):<br /> 
+							  <code style="margin-left:40px">https://api.nasa.gov/SSD-CNEOS/Sentry?api_key=[#]&des=433</code></p><br />							  
+							  <p style="margin-left:40px">Mode V-The VI (virtual impactor) for available Sentry objects with IP >= 1e-3 (IP is the sum of the impact probabilities from all detected potential impacts):<br /> 
+							  <code style="margin-left:40px">https://api.nasa.gov/SSD-CNEOS/Sentry?api_key=[#]&all=1&ip-min=1e-3</code></p><br />
+							  <p style="margin-left:40px">Mode R-Objects removed from Sentry (these were once considered a threat but then were removed):<br /> 
+							  <code style="margin-left:40px">https://api.nasa.gov/SSD-CNEOS/Sentry?api_key=[#]&removed=1</code></p><br />
+							</div>
+							<div>
+							  <p>Just as with the NASA CAD API, there isn't a lot of information on the NASA Sentry API site. But happily, there is a link to the <a href="https://ssd-api.jpl.nasa.gov/doc/sentry.html">JPL CNEOS Sentry 
+							  API</a> website. This is where one can find a listing and description of the parameters, as well as a data output section with 
+							  sample output. As before, the data output section is key, as it lets us know the output will be in JSON-format and it deciphers the data fields
+							  for each of the four modes.
+							  </p>
+							  <p>There are 689 objects currently in the Sentry database (as of 2/24/2017,) and objects are added and removed as appropriate. Referring to the Data 
+							  Output section of the JPL CNEOS Sentry API site, the data we are looking for (the less technical, more user friendly data) is found in the Mode S query.<br />
+							  
+							  The parameters I have chosen are: 
+							    <ul>
+								  <li>h-max: none (default-Absolute Magnitude which is a measure of intrinsic brightness)
+								  <li>ps-min: none (default- Palermo Technical Impact Hazard Scale: <-2 no likely consequences, between -2 and 0 merit careful monitoring, >2 merit concern)
+								  <li>ip-min: IP >= 1e-3 (Impact Probability that is relatively high)
+								  <li>days: none (default- no restriction/observed anytime)
+								</ul>
+							  </p>
+							    <code style="margin-left:40px">https://api.nasa.gov/SSD-CNEOS/Sentry?api_key='+ apiKey +'&ip-min=1e-3</code><br /><br />
+							<div style="border-top:thick black solid; margin:auto; width: 75%; height:3px;">
+							</div>
+							<br />
+							  <p>Below is the JavaScript code used for the call to the API:</p>
+							  <p style="margin-left:40px">The code is similar to that for the call to the CAD API. The differences are the URL and lines 10-32 which include code for a table to display the results. 
+							  We'll discuss the table below.</p>
+							    <pre class="epic">
+		
+		var apiKey = 'my API key'; 
+		var req = new XMLHttpRequest();
+		req.open('GET', 'https://api.nasa.gov/SSD-CNEOS/Sentry?api_key='+ apiKey +'&ip-min=1e-3', true);	  
+		req.addEventListener('load',function(){
+		  if(req.status >= 200 && req.status < 400){
+		    var response = JSON.parse(req.responseText);
+		    console.log(response);
+		    console.log(req.responseText);
+		  
+		    function buildTable(response) {
+			  var table = document.createElement("table");
+			  var fields = Object.keys(response.data[0]);
+			  var headRow = document.createElement("tr");
+			  fields.forEach(function(field) {
+			    var headCell = document.createElement("th");
+			    headCell.textContent = field;
+			    headRow.appendChild(headCell);
+			  });
+			  table.appendChild(headRow); 
+						
+			  response.data.forEach(function(object) {
+			    var row = document.createElement("tr");
+			    fields.forEach(function(field) {
+				  var cell = document.createElement("td");
+				  cell.textContent = object[field];
+				  row.appendChild(cell);
+				  });
+			    table.appendChild(row);
+			  });
+			  return table;
+		    }
+		    document.body.appendChild(buildTable(response));
+		  
+		  }
+		  else {
+		    document.write("Error in network request: " + req.statusText);
+		  }});
+		req.send(null);  
+								</pre>
+							  </div>
+							  <br />
+							  <div style="border-top:thick black solid; margin:auto; width: 75%; height:3px;">
+							  </div>
+							  <br />
+							  <div>
+							    <p>Below you can see the JSON data received from our GET request <code>req.responseText</code>:</p>
+								<textarea id="unparsed" class="scrollabletextbox" name="string" value="">
+								{"count":"10","signature":{"source":"NASA/JPL Sentry Data API","version":"1.0"},"data":[{"ip":"0.002207389","range":"2069-2113","ps_cum":"-2.93","diameter":"0.037","ps_max":"-3.26","h":"24.79","last_obs":"2000-Oct-03.60723","v_inf":"1.35671958037301","fullname":"(2000 SG344)","n_imp":"104","last_obs_jd":"2451821.10723","ts_max":"0","id":"bK00SY4G","des":"2000 SG344"},{"ip":"0.0097104083","range":"2073-2110","ps_cum":"-3.93","diameter":"0.0072","ps_max":"-3.93","h":"28.35","last_obs":"2006-May-10.17442","v_inf":"2.98012482872631","fullname":"(2006 JY26)","n_imp":"48","last_obs_jd":"2453865.67442","ts_max":"0","id":"bK06J26Y","des":"2006 JY26"},{"ip":"0.065411835514","range":"2095-2115","ps_cum":"-3.20","diameter":"0.0072","ps_max":"-3.20","h":"28.37","last_obs":"2010-Sep-08.514787","v_inf":"5.10004114054221","fullname":"(2010 RF12)","n_imp":"52","last_obs_jd":"2455448.014787","ts_max":"0","id":"bK10R12F","des":"2010 RF12"},{"ip":"0.001029681991","range":"2044-2114","ps_cum":"-5.43","diameter":"0.0039","ps_max":"-5.83","h":"29.69","last_obs":"2011-Jan-14.39637","v_inf":"3.65143039354177","fullname":"(2011 AM37)","n_imp":"120","last_obs_jd":"2455575.89637","ts_max":"0","id":"bK11A37M","des":"2011 AM37"},{"ip":"0.0019826005459","range":"2053-2116","ps_cum":"-3.94","diameter":"0.014","ps_max":"-4.37","h":"26.97","last_obs":"2012-May-29.3498","v_inf":"3.31945536416035","fullname":"(2012 HG2)","n_imp":"318","last_obs_jd":"2456076.8498","ts_max":"0","id":"bK12H02G","des":"2012 HG2"},{"ip":"0.00115715972","range":"2069-2115","ps_cum":"-5.26","diameter":"0.0047","ps_max":"-5.27","h":"29.29","last_obs":"2014-May-07.291998","v_inf":"3.72131515820478","fullname":"(2014 JR24)","n_imp":"38","last_obs_jd":"2456784.791998","ts_max":"0","id":"bK14J24R","des":"2014 JR24"},{"ip":"0.001753802574","range":"2042-2115","ps_cum":"-4.13","diameter":"0.0075","ps_max":"-4.36","h":"28.28","last_obs":"2015-Dec-19.27253","v_inf":"16.3471588503781","fullname":"(2015 YJ)","n_imp":"52","last_obs_jd":"2457375.77253","ts_max":"0","id":"bK15Y00J","des":"2015 YJ"},{"ip":"0.0015738","range":"2185-2198","ps_cum":"-1.78","diameter":"0.16","ps_max":"-1.83","h":"22.10","last_obs":"2015-Dec-01.17296","v_inf":"15.8710776464608","fullname":"410777 (2009 FD)","n_imp":"7","last_obs_jd":"2457357.67296","ts_max":null,"id":"a0410777","des":"410777"},{"ip":"0.0012035596169","range":"2071-2115","ps_cum":"-5.02","diameter":"0.0065","ps_max":"-5.48","h":"28.60","last_obs":"2016-Nov-08.11917","v_inf":"5.45160001392698","fullname":"(2016 VB1)","n_imp":"73","last_obs_jd":"2457700.61917","ts_max":"0","id":"bK16V01B","des":"2016 VB1"},{"ip":"0.001856998588","range":"2051-2093","ps_cum":"-4.17","diameter":"0.011","ps_max":"-4.51","h":"27.49","last_obs":"2016-Nov-29.31101","v_inf":"1.14177093001645","fullname":"(2016 RD34)","n_imp":"25","last_obs_jd":"2457721.81101","ts_max":"0","id":"bK16R34D","des":"2016 RD34"}]}
+								</textarea>
+							    <br /><br />
+							  <div style="border-top:thick black solid; margin:auto; width: 75%; height:3px;">
+							  </div>
+							  <br />
+							    <p>And here the data has been parsed to a JavaScript object <code>request</code> (showing the details of the first data object.) If you refer back to the code to create the table,
+							  you can see that the &ltth&gt cells were filled using the <code>Object.keys</code> function to return the fields array containing the property names that the <code>response.data[0]</code> object had.
+							  The &lttd&gt cells were filled with the values of the objects in the <code>response.data</code> array (hence <code>cell.textContent = object[field];</code>).
+							    </p>
+							    <pre class="epic">
+		﻿
+ 
+		Object
+		  count:"10"
+		  data:Array[10]
+		    0:Object
+			  des: "2000 SG344"
+			  diameter: "0.037"
+			  fullname: "(2000 SG344)"
+			  h: "24.79"
+			  id: "bK00SY4G"
+			  ip: "0.002207389"
+			  last_obs: "2000-Oct-03.60723"
+			  last_obs_jd: "2451821.10723"
+			  n_imp: "104"
+			  ps_cum: "-2.93"
+			  ps_max: "-3.26"
+			  range: "2069-2113"
+			  ts_max: "0"
+			  v_inf: "1.35671958037301"
+			  __proto__:Object
+			1:Object
+			2:Object
+			3:Object
+			4:Object
+			5:Object
+			6:Object
+			7:Object
+			8:Object
+			9:Object
+			length:10
+			__proto__:Array[0]
+		  signature:Object
+		  __proto__:Object						
+								</pre>
+							</div>
+							<br /><br />
+							<div style="border-top:thick black solid; margin:auto; width: 75%; height:3px;">
+							</div>
+							<br />
+							<div>
+							  <p>And here is the table created from the results:</p>
+						      <div id="tableS">
+			  
+						      </div>
+							</div>
+							<div>
+							  <p>There are 10 objects out there that have a cumulative impact probability (ip) greater than .001. None of our 17 near-Earth asteroids made the list. 
+							  Of these 10 asteroids, only 1, 410777 (2009 FD), is >-2 on the Palermo Scale (ps_cum) meaning it merits careful monitoring. If we look at the diameters, 410777 (2009 FD) is the largest at 0.16 km, hardly extinction size. 
+							  But look: the year range is 2185-2198, so <em>we</em> have nothing to worry about! In fact, looking at those dates, most of those are gonna miss me (that is, I will miss them) by several years.
+							  The list isn't static 'though. It is a good thing we can use the NASA Sentry API to check back on any newcomers to the list!
+							  </p>
+							</div>
+						</div>
+					</section>
+
+			</div>
+
+		<!-- Footer -->
+			<footer id="footer" class="wrapper alt">
+				<div class="inner">
+					<ul class="menu">
+						<li>&copy; Aalon C. Cole 3/2/2017 All rights reserved.</li><li>Design: <a href="http://html5up.net">HTML5 UP</a></li>
+						<li>Image Courtesy NASA/JPL-Caltech.</li><li>API and Website information provided by NASA/JPL</li>
+					</ul>
+				</div>
+			</footer>
+
+		<!-- Scripts -->
+			<script src="sentry.js"></script>
+			<script src="assets/js/jquery.min.js"></script>
+			<script src="assets/js/jquery.scrollex.min.js"></script>
+			<script src="assets/js/jquery.scrolly.min.js"></script>
+			<script src="assets/js/skel.min.js"></script>
+			<script src="assets/js/util.js"></script>
+			<!--[if lte IE 8]><script src="assets/js/ie/respond.min.js"></script><![endif]-->
+			<script src="assets/js/main.js"></script>
+
+	</body>
+</html>

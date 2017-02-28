@@ -1,0 +1,259 @@
+<!DOCTYPE HTML>
+<!--
+	Hyperspace by HTML5 UP
+	html5up.net | @ajlkn
+	Free for personal and commercial use under the CCA 3.0 license (html5up.net/license)
+-->
+<html>
+	<head>
+		<title>CAD API</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<!--[if lte IE 8]><script src="assets/js/ie/html5shiv.js"></script><![endif]-->
+		<link rel="stylesheet" href="assets/css/main.css" />
+		<!--[if lte IE 9]><link rel="stylesheet" href="assets/css/ie9.css" /><![endif]-->
+		<!--[if lte IE 8]><link rel="stylesheet" href="assets/css/ie8.css" /><![endif]-->
+	</head>
+	<body>
+
+		<!-- Header -->
+			<header id="header">
+				<a href="index.html" class="title">NASA APIs</a>
+				<nav>
+					<ul>
+						<li><a href="NASAAPI.html">Home</a></li>
+						<li><a href="EPIC.html" class="active">EPIC API</a></li>
+						<li><a href="Sentry.html">SSD-CNEOS Sentry API</a></li>
+					</ul>
+				</nav>
+			</header>
+
+		<!-- Wrapper -->
+			<div id="wrapper">
+
+				<!-- Main -->
+					<section id="main" class="wrapper">
+						<div class="inner">
+							<h1 class="major">The CAD API</h1>
+							<span><img src="images/PIA21452_hires.png" style="width:300px;height:300px" alt="" /></span>
+							<div>
+							  <p>Shown above is a radar image of asteroid 2017 BQ6 compiled this year on 2/6-7 from NASA's Goldstone Deep Space Communications Complex in California. 
+							  Images reveal an irregular, angular-appearing asteroid about 660 feet in size that rotates about once every three hours.  Is this asteroid
+							  one that we could see with our new telescope? Let's find out with the NASA CAD API.
+							  </p>
+							</div>
+							<div>
+							  <br />
+							  <p>The first thing we want to do is prepare our GET request. The URL we will be using is:<br /><br />
+							    <code style="margin-left:40px">https://api.nasa.gov/SSD-CNEOS/CAD?api_key=[#]</code>
+							  </p>
+							  <p>If you go to the <a href="https://api.nasa.gov/api.html#CAD">NASA CAD API</a> site, you will find two query examples:</p>
+							  <p style="margin-left:40px">If you know the asteroid designation (433 is the designation for asteroid 433 Eros,) the following request will get you all the close-approach data for an asteroid using the query defaults
+							  (close-approaches less than .05 au (an astronomical unit is approx. equal to the average distance between the Earth and the Sun) in the next 60 days sorted by date):<br />
+							  <code>https://api.nasa.gov/SSD-CNEOS/CAD?api_key=[#]&des=433</code></p>
+							  <p style="margin-left:40px">You can query by distance (10 LD-lunar distance is the average distance between the Earth and the Moon) and/or a date (on or after 2018-Jan-01) and get all the close-approach data sorted by distance:<br />
+							  <code>https://api.nasa.gov/SSD-CNEOS/CAD?api_key=[#]&dist-max=10LD&date-min=2018-01-01&sort=dist</code>
+							  </p><br />
+							</div>
+							<div>
+							  <p>There isn't a lot of information on the NASA CAD API site. There is a link to the <a href="https://ssd-api.jpl.nasa.gov/doc/cad.html">JPL SBDB 
+							  Close-Approach Data API</a> website. This is where one can find a listing and description of the parameters, as well as a data output section with 
+							  sample output. The data output section is key, as it lets us know the output will be in JSON-format and it deciphers the data fields.
+							  </p>
+							  <p>We want to be able to get a good look at any asteroids and comets so the parameters I have entered are:
+							    <ul>
+								  <li>date-max=2017-03-31 (we want all dates between now and the end of March)
+								  <li>dist: none (default is .05 au- this will exclude objects at greater distance than this)
+								  <li>h: none (default- no restriction on absolute magnitude)
+								  <li>v-inf: none (default- no restriction on velocity relative to a massless body (km/s))
+								  <li>v-rel: none (default- no restriction  on velocity relative to the approach body at close approach (km/s)) 
+								  <li>class: none (default- no restriction on SBDB orbit class value)
+								  <li>kind: none (default no restriction on kinds of object)
+								  <li>spk: none (default- only used when querying for specific SPK-ID (SPICE ephemeris subsystem ID)) 
+								  <li>des: none (default - only used when querying for specific object)
+								  <li>body: Earth (default - one can also allow, Moon, Pluto,other planets or all bodies w/ ALL or *)	  
+								  <li>sort=date (sort results by date (one can also sort by dist, dist-min, v-inf, h or object)
+								  <li>limit: none (default- otherwise limit data to first N results)
+								  <li>?api_key='my API key'
+								</ul>
+							    <code style="margin-left:40px">https://api.nasa.gov/SSD-CNEOS/CAD?api_key=' + apiKey + '&date-max=2017-03-31&sort=date</code>
+							  </p>
+							 <div style="border-top:thick black solid; margin:auto; width: 75%; height:3px;">
+							</div>
+							<br />
+							  <p>Below is the JavaScript code used for the call to the API:</p>
+							  <p style="margin-left:40px">The code is similar to that for the call to the EPIC API. The differences are the URL and lines 10-34 which include code for a table to display the results. 
+							  We'll discuss the table below.</p>
+							    <pre class="epic">
+		
+		var apiKey = 'my API key'; 
+		var req = new XMLHttpRequest();	
+		req.open('GET', 'https://api.nasa.gov/SSD-CNEOS/CAD?api_key=' + apiKey + '&date-max=2017-03-31&sort=date', true);	  
+		req.addEventListener('load',function(){
+		  if(req.status >= 200 && req.status < 400){
+			var response = JSON.parse(req.responseText);
+			console.log(response);
+			console.log(req.responseText);
+			
+			function buildTable(response) {
+			  var table = document.createElement("table");
+			  var fields = response.fields;
+			  var headRow = document.createElement("tr");
+			  fields.forEach(function(field) {
+			    var headCell = document.createElement("th");
+			    headCell.textContent = field;
+			    headRow.appendChild(headCell);
+			  });
+			  table.appendChild(headRow);
+
+			  response.data.forEach(function(object) {
+			    var row = document.createElement("tr");
+			    for (var i = 0; i < response.fields.length; i++) {
+			      (function(j) {
+				  var cell = document.createElement("td");
+				  cell.textContent = [object[j]];
+				  row.appendChild(cell);
+				  })(i);
+			    }
+			    table.appendChild(row);
+			  });
+			return table;
+			}
+			document.getElementById("table").appendChild(buildTable(response));
+			
+		  } 
+		  else {
+			document.write("Error in network request: " + req.statusText);
+		  }});
+		req.send(null);
+								</pre>
+								<br />
+							  </div>
+							  <div style="border-top:thick black solid; margin:auto; width: 75%; height:3px;">
+							  </div>
+							  <div>
+							    <br />
+							    <p>Below you can see the JSON data received from our GET request <code>req.responseText</code>:</p>
+								  <textarea id="unparsed" class="scrollabletextbox" name="string" value="">
+								  {"signature":{"source":"NASA/JPL SBDB Close Approach Data API","version":"1.1"},"count":"3","fields":["des","orbit_id","jd","cd","dist","dist_min","dist_max","v_rel","v_inf","t_sigma_f","h"],"data":[["2017 DR34","1","2457809.702685586","2017-Feb-25 04:52","0.00149411489026963","0.00149278020065302","0.00149544962802065","11.4141258200217","11.2568039766832","< 00:01","29.103"],["2012 TC4","22","2458038.645225470","2017-Oct-12 03:29","9.6251580873557e-05","8.81780128572509e-05","0.00289623510069374","9.90229773063504","6.53380480861669","05:34","26.7"],["2015 WN1","7","2459165.038385049","2020-Nov-11 12:55","0.000803257957490799","0.000412284993281346","0.0621377303887374","9.24962179106988","8.88376734743211","2_22:40","26.5"]]}
+								  </textarea>
+							  </div>
+							    <br/><br />
+							  <div style="border-top:thick black solid; margin:auto; width: 75%; height:3px;">
+							  </div>
+							  <div>
+							  <br /><br />							    
+							  <p>And here the data has been parsed to a JavaScript object <code>request</code> (showing the details of the first data object and the fields object.) If you refer back to the code to create the table,
+							  you can see that the &ltth&gt cells were filled with the values of the fields in the <code>response.fields</code> array. The &lttd&gt cells were filled with the values of the objects in the
+							  arrays in the <code>response.data</code> array (hence <code>cell.textContent = [object[j]];</code>).
+							  </p>
+							    <pre class="epic">
+		﻿
+ 
+		Object
+		  count:"17"
+		  data:Array[17]
+		    0:Array[11]
+			  0:"2017 DU34"
+			  1:"1"
+			  2:"2457808.577352447"
+			  3:"2017-Feb-24 01:51"
+			  4:"0.0256651268239048"
+			  5:"0.0256086404577222"
+			  6:"0.0257216342003747"
+			  7:"10.6464963102051"
+			  8:"10.6367405467973"
+			  9:"< 00:01"
+			  10:"26.742"
+			  length:11
+			  __proto__:Array[0]
+			1:Array[11]
+			2:Array[11]
+			3:Array[11]
+			4:Array[11]
+			5:Array[11]
+			6:Array[11]
+			7:Array[11]
+			8:Array[11]
+			9:Array[11]
+			10:Array[11]
+			11:Array[11]
+			12:Array[11]
+			13:Array[11]
+			14:Array[11]
+			15:Array[11]
+			16:Array[11]
+			length:17
+			__proto__:Array[0]
+		  fields:Array[11]
+			0:"des"
+			1:"orbit_id"
+			2:"jd"
+			3:"cd"
+			4:"dist"
+			5:"dist_min"
+			6:"dist_max"
+			7:"v_rel"
+			8:"v_inf"
+			9:"t_sigma_f"
+			10:"h"
+			length:11
+			__proto__:Array[0]
+		  signature:Object
+		  __proto__:Object						
+								</pre>
+							</div>
+							<br /><br />
+							<div style="border-top:thick black solid; margin:auto; width: 75%; height:3px;">
+							</div>
+							<br /><br />
+							<div>
+							  <p>And here is the table created from the results:
+							  </p>
+						      <div id="table">
+			  
+						      </div>						  
+							</div>
+							<div>
+							  <p>Looks like there are 17 asteroids we can check out between now and the end of March, that will be within half the
+							  distance between Earth and the Sun. Asteroid 2017 BQ6 isn't one of them, though we could always change our query to get the close-approach data by des and find out when it is expected. There are a lot
+							  of numbers, but basically we are interested in the name (des,) the date of closest approach (cd,) and the nominal distance in au (dist--along w/ dist_min and dist_max.) 
+							  With this information in hand, we can plan our "star-asteroid-comet-gazing!"
+							  </p><br />
+							  <p>However, I just found out about an asteroid that passed between the Earth and the Moon on 2/2/2017, Groundhog Day.
+							  I don't think Punxsutawney Phil saw his shadow this year...I think he was freaked out by the asteroid! Let's check out
+							  another NASA API that will let us know if we need to worry about any of these asteroids.
+							  </p>
+							</div>
+							<div>
+							 <form action=Sentry.html>
+                             <input type="submit" value="Continue" />
+                             </form>
+							</div>
+						</div>
+					</section>
+
+			</div>
+
+		<!-- Footer -->
+			<footer id="footer" class="wrapper alt">
+				<div class="inner">
+					<ul class="menu">
+						<li>&copy; Aalon C. Cole 3/2/2017 All rights reserved.</li><li>Design: <a href="http://html5up.net">HTML5 UP</a></li>
+						<li>Image Courtesy NASA/JPL-Caltech.</li><li>API and Website information provided by NASA/JPL</li>
+					</ul>
+				</div>
+			</footer>
+
+		<!-- Scripts -->
+			<script src="cad.js"></script>
+			<script src="assets/js/jquery.min.js"></script>
+			<script src="assets/js/jquery.scrollex.min.js"></script>
+			<script src="assets/js/jquery.scrolly.min.js"></script>
+			<script src="assets/js/skel.min.js"></script>
+			<script src="assets/js/util.js"></script>
+			<!--[if lte IE 8]><script src="assets/js/ie/respond.min.js"></script><![endif]-->
+			<script src="assets/js/main.js"></script>
+
+	</body>
+</html>

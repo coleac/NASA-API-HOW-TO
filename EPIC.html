@@ -37,7 +37,7 @@
 							<h1 class="major">The EPIC API</h1>
 							  <span id="pic" ></span>
 							<div>
-							  <p>Hey, there is a picture of us! It was taken this year, on the 16th of February, by the NASA EPIC camera onboard the NOAA DSCOVR spacecraft. This is the type of image, along with its accompanying metadata, that we can retrieve using the EPIC API. Let's see how we can do this!
+							  <p>Hey, there is a picture of us! It was taken this year, on the 16th of February, by the NASA EPIC camera onboard the National Oceanic and Atmospheric Administration (NOAA) DSCOVR spacecraft. This is the type of image, along with its accompanying metadata, that we can retrieve using the EPIC API. Let's see how we can do this!
 							  </p>
 							  <br />
 							  <p>The first thing we want to do is prepare our GET request. The URL we will be using is:<br /><br />
@@ -46,9 +46,9 @@
 							  </p><br />		
 							</div>
 							<div>
-							  <p>We are going to be querying by date-- 2/16/2017. Here is the update URL:</p> 
+							  <p>We are going to be querying by date-- 2/16/2017. Here is the updated URL:</p> 
 							  <p> <code style="margin-left:40px">https://api.nasa.gov/EPIC/api/natural/date/2017-02-16?api_key=' + apiKey</code></p>
-							  <p>The parameters I have entered are natural (type of image) and date (format: date/2017-02-16). One then enters the ? for the query 
+							  <p>The parameters I have entered are natural (type of image) and date/2017-02-16 (format for the date.) One then enters the ? for the query 
 							  followed by the api key (format: api_key=[#].)</p>
 							<div style="border-top:thick black solid; margin:auto; width: 75%; height:3px;">
 							</div>
@@ -159,7 +159,7 @@
 							    <ul>
 								  <li>archive
 								  <li>natural (indicated by 1b in the image value)
-								  <li>date (format: 2017/02/16)
+								  <li>2017/02/16 (date)
 								  <li>png (image type-available in png, jpg and thumbs)
 								  <li>earth (this is a variable I assigned the image value: <code>var earth = response[10].image</code>)
 								  <li>.png (same image type as before)
@@ -199,7 +199,7 @@
 							    </pre>
 							  </p>
 							  <p>And that is it! We have our image! If I want to see the other parts of the globe, I just need to change the image value by accessing the response in the
-							  console log. And I can always access another day.
+							  console log and updating the code. And I can always access another day.
 							  </p>
 							</div>
 							<br />

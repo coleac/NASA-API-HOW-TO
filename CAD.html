@@ -39,7 +39,7 @@
 							<div>
 							  <p>Shown above is a radar image of asteroid 2017 BQ6 compiled this year on 2/6-7 from NASA's Goldstone Deep Space Communications Complex in California. 
 							  Images reveal an irregular, angular-appearing asteroid about 660 feet in size that rotates about once every three hours.  Is this asteroid
-							  one that we could see with our new telescope? Let's find out with the NASA CAD API.
+							  one that we could see with our own telescope? Let's find out with the NASA CAD API.
 							  </p>
 							</div>
 							<div>
@@ -51,7 +51,7 @@
 							  <p style="margin-left:40px">If you know the asteroid designation (433 is the designation for asteroid 433 Eros,) the following request will get you all the close-approach data for an asteroid using the query defaults
 							  (close-approaches less than .05 au (an astronomical unit is approx. equal to the average distance between the Earth and the Sun) in the next 60 days sorted by date):<br />
 							  <code>https://api.nasa.gov/SSD-CNEOS/CAD?api_key=[#]&des=433</code></p>
-							  <p style="margin-left:40px">You can query by distance (10 LD-lunar distance is the average distance between the Earth and the Moon) and/or a date (on or after 2018-Jan-01) and get all the close-approach data sorted by distance:<br />
+							  <p style="margin-left:40px">You can query by distance (dist-max= 10 LD -lunar distance is the average distance between the Earth and the Moon, so this will exclude objects greater than 10x this distance) and/or a date (date-min=2018-Jan-01-on or after this date) and get all the close-approach data sorted by distance:<br />
 							  <code>https://api.nasa.gov/SSD-CNEOS/CAD?api_key=[#]&dist-max=10LD&date-min=2018-01-01&sort=dist</code>
 							  </p><br />
 							</div>
@@ -67,7 +67,7 @@
 								  <li>h: none (default- no restriction on absolute magnitude)
 								  <li>v-inf: none (default- no restriction on velocity relative to a massless body (km/s))
 								  <li>v-rel: none (default- no restriction  on velocity relative to the approach body at close approach (km/s)) 
-								  <li>class: none (default- no restriction on SBDB orbit class value)
+								  <li>class: none (default- no restriction on SBDB orbit class value (these are listed on the JPL CAD API page))
 								  <li>kind: none (default no restriction on kinds of object)
 								  <li>spk: none (default- only used when querying for specific SPK-ID (SPICE ephemeris subsystem ID)) 
 								  <li>des: none (default - only used when querying for specific object)
@@ -83,7 +83,7 @@
 							<br />
 							  <p>Below is the JavaScript code used for the call to the API:</p>
 							  <p style="margin-left:40px">The code is similar to that for the call to the EPIC API. The differences are the URL and lines 10-34 which include code for a table to display the results. 
-							  We'll discuss the table below.</p>
+							  We'll discuss the table shortly.</p>
 							    <pre class="epic">
 		
 		var apiKey = 'my API key'; 
@@ -143,9 +143,11 @@
 							  </div>
 							  <div>
 							  <br /><br />							    
-							  <p>And here the data has been parsed to a JavaScript object <code>request</code> (showing the details of the first data object and the fields object.) If you refer back to the code to create the table,
-							  you can see that the &ltth&gt cells were filled with the values of the fields in the <code>response.fields</code> array. The &lttd&gt cells were filled with the values of the objects in the
-							  arrays in the <code>response.data</code> array (hence <code>cell.textContent = [object[j]];</code>).
+							  <p>And here the data has been parsed to a JavaScript object <code>request</code>.</p>
+							  <p>If you refer back to the code to create the table,
+							  you can see that the &ltth&gt cells were filled with the values of the properties in the
+							  <code>response.fields</code> array. The &lttd&gt cells were filled with the values of the properties
+							  held in the array of the values of the properties held in the <code>response.data</code> array (hence <code>cell.textContent = [object[j]];</code>).
 							  </p>
 							    <pre class="epic">
 		﻿
@@ -167,24 +169,24 @@
 			  10:"26.742"
 			  length:11
 			  __proto__:Array[0]
-			1:Array[11]
-			2:Array[11]
-			3:Array[11]
-			4:Array[11]
-			5:Array[11]
-			6:Array[11]
-			7:Array[11]
-			8:Array[11]
-			9:Array[11]
-			10:Array[11]
-			11:Array[11]
-			12:Array[11]
-			13:Array[11]
-			14:Array[11]
-			15:Array[11]
-			16:Array[11]
-			length:17
-			__proto__:Array[0]
+		    1:Array[11]
+		    2:Array[11]
+		    3:Array[11]
+		    4:Array[11]
+		    5:Array[11]
+		    6:Array[11]
+		    7:Array[11]
+		    8:Array[11]
+		    9:Array[11]
+		    10:Array[11]
+		    11:Array[11]
+		    12:Array[11]
+		    13:Array[11]
+		    14:Array[11]
+		    15:Array[11]
+		    16:Array[11]
+		    length:17
+		    __proto__:Array[0]
 		  fields:Array[11]
 			0:"des"
 			1:"orbit_id"
@@ -215,8 +217,8 @@
 						      </div>						  
 							</div>
 							<div>
-							  <p>Looks like there are 17 asteroids we can check out between now and the end of March, that will be within half the
-							  distance between Earth and the Sun. Asteroid 2017 BQ6 isn't one of them, though we could always change our query to get the close-approach data by des and find out when it is expected. There are a lot
+							  <p>Looks like there are 17 asteroids we can check out between now and the end of March, that will be within .05 au (or 1/20th) of the
+							  distance between Earth and the Sun. Asteroid 2017 BQ6 isn't one of them, 'though we could always change our query to get the close-approach data by des and find out when it is expected. There are a lot
 							  of numbers, but basically we are interested in the name (des,) the date of closest approach (cd,) and the nominal distance in au (dist--along w/ dist_min and dist_max.) 
 							  With this information in hand, we can plan our "star-asteroid-comet-gazing!"
 							  </p><br />

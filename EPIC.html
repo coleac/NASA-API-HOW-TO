@@ -62,8 +62,8 @@
 		var req = new XMLHttpRequest();
 		req.open('GET', 'https://api.nasa.gov/EPIC/api/natural/date/2017-02-16?api_key=' + apiKey, true);
 								</pre>
-							  <p style="margin-left:40px">An event listener is registered on the request's <code>load</code> event-a callback. The request is sent with no additional data <code>request.send(null);</code>. 
-							  Within the callback function: If the call is not successful an error message is written. Otherwise, the <code>responseText</code> from the request which is returned as a JSON string is parsed to a JavaScript object and assigned to the response variable, which we then
+							  <p style="margin-left:40px">An event listener is registered on the request's <code>load</code> event-a callback. The request is then sent, with no additional data in this case <code>request.send(null);</code>. 
+							  Within the callback function: If the call is not successful an error message is written. Otherwise, the <code>responseText</code> from the request, which is returned as a JSON string, is parsed to a JavaScript object and assigned to the response variable, which we then
 							  log to the console to determine how to access the data we want.
 							  </p>
 							    <pre class="epic">
@@ -160,14 +160,14 @@
 								  <li>natural (indicated by 1b in the image value)
 								  <li>2017/02/16 (date)
 								  <li>png (image type-available in png, jpg and thumbs)
-								  <li>earth (this is a variable I assigned the image value: <code>var earth = response[10].image</code>)
+								  <li>earth (this is a variable assigned the image value: <code>var earth = response[10].image</code>)
 								  <li>.png (same image type as before)
 								  <li>?api_key= apiKey (same as before)
 								</ul>
 							  </p><br />
 							    <code style="margin-left:40px">https://api.nasa.gov/EPIC/archive/natural/2017/02/16/png/"+ earth +".png?api_key=" + apiKey</code><br /><br />
 							  <p>
-							    <p>Below is the same JavaScript request with five new lines of code within the callback function. We have the earth variable listed above for the image. Now we create an img element 
+							    <p>Below is the same JavaScript request with five new lines of code within the callback function. We have the earth variable (mentioned above) for the image. Now we create an img element 
 							    and assign it to the img variable. The image request is assigned as the img source. The image fills the screen, so the size needs to be adjusted with the style attribute.
 							    And finally, we append the image to an element in the document, as I appended the image above.
 							    </p>

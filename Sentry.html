@@ -79,7 +79,7 @@
 							<br />
 							  <p>Below is the JavaScript code used for the call to the API:</p>
 							  <p style="margin-left:40px">The code is similar to that for the call to the CAD API. The differences are the URL and lines 10-32 which include code for a table to display the results. 
-							  We'll discuss the table below.</p>
+							  We'll discuss the table shortly.</p>
 							    <pre class="epic">
 		
 		var apiKey = 'my API key'; 
@@ -135,9 +135,10 @@
 							  <div style="border-top:thick black solid; margin:auto; width: 75%; height:3px;">
 							  </div>
 							  <br />
-							    <p>And here the data has been parsed to a JavaScript object <code>request</code> (showing the details of the first data object.) If you refer back to the code to create the table,
+								  <p>And here the data has been parsed to a JavaScript object <code>request</code>.</p>
+								  <p>If you refer back to the code to create the table,
 							  you can see that the &ltth&gt cells were filled using the <code>Object.keys</code> function to return the fields array containing the property names that the <code>response.data[0]</code> object had.
-							  The &lttd&gt cells were filled with the values of the objects in the <code>response.data</code> array (hence <code>cell.textContent = object[field];</code>).
+							  The &lttd&gt cells were filled with the values of the properties of the objects in the <code>response.data</code> array (hence <code>cell.textContent = object[field];</code>).
 							    </p>
 							    <pre class="epic">
 		﻿
@@ -161,17 +162,17 @@
 			  ts_max: "0"
 			  v_inf: "1.35671958037301"
 			  __proto__:Object
-			1:Object
-			2:Object
-			3:Object
-			4:Object
-			5:Object
-			6:Object
-			7:Object
-			8:Object
-			9:Object
-			length:10
-			__proto__:Array[0]
+		    1:Object
+		    2:Object
+		    3:Object
+		    4:Object
+		    5:Object
+		    6:Object
+		    7:Object
+		    8:Object
+		    9:Object
+		    length:10
+		    __proto__:Array[0]
 		  signature:Object
 		  __proto__:Object						
 								</pre>

@@ -42,11 +42,11 @@
 							  <br />
 							  <p>The first thing we want to do is prepare our GET request. The URL we will be using is:<br /><br />
 							  <code style="margin-left:40px">https://api.nasa.gov/EPIC/api</code></p>
-							  <p>If you go to the <a href="https://api.nasa.gov/api.html#EPIC">NASA EPIC API site</a>, you will find a listing of the query parameters and several example GET queries. You can query by type of image (there are both natural and enhanced images,) by date and once you have an image file name (from the metadata,) you can query the archive for the image.
+							  <p>If you go to the <a href="https://api.nasa.gov/api.html#EPIC">NASA EPIC API site</a>, you will find a listing of the query parameters and several example GET queries. You can query by type of image (there are both natural and enhanced images,) by date, and once you have an image file name from the metadata, you can query the archive for the image.
 							  </p><br />		
 							</div>
 							<div>
-							  <p>We are going to be querying by date-- 2/16/2017. The update URL:</p> 
+							  <p>We are going to be querying by date-- 2/16/2017. Here is the update URL:</p> 
 							  <p> <code style="margin-left:40px">https://api.nasa.gov/EPIC/api/natural/date/2017-02-16?api_key=' + apiKey</code></p>
 							  <p>The parameters I have entered are natural (type of image) and date (format: date/2017-02-16). One then enters the ? for the query 
 							  followed by the api key (format: api_key=[#].)</p>
@@ -54,7 +54,7 @@
 							</div>
 							<br />
 							  <p>Below is the JavaScript code used for the call to the API:</p>
-							  <p style="margin-left:40px">The API key is assigned to the variable apiKey. XMLHttpRequest is an object that can make an HTTP request and return the data it gets from 
+							  <p style="margin-left:40px">The API key is assigned to the apiKey variable. XMLHttpRequest is an object that can make an HTTP request and return the data it gets from 
 							  that request. That object is assigned to the req variable. It opens an asynchronous <code>true</code>GET request to our resource, the URL.
 							  </p>
 							    <pre class="epic">
@@ -64,7 +64,7 @@
 		req.open('GET', 'https://api.nasa.gov/EPIC/api/natural/date/2017-02-16?api_key=' + apiKey, true);
 								</pre>
 							  <p style="margin-left:40px">An event listener is registered on the request's <code>load</code> event. The request is sent with no additional data <code>request.send(null)</code>. 
-							  If the call is not successful an error message is written. Otherwise, the responseText from the request is parsed and assigned to the variable response, which we then
+							  If the call is not successful an error message is written. Otherwise, the responseText from the request is parsed and assigned to the response variable, which we then
 							  log to the console to determine how to access the data we want.
 							  </p>
 							    <pre class="epic">
@@ -146,7 +146,7 @@
 							  </pre>
 							  <br />
 							  <p>So, we have metadata for 12 images (Array[12].) I chose the eleventh object as it was an image of North and South America. The first was Australia 
-							  (I wasn't in that one :P ). The only part we are interested in here is <strong>image:"epic_1b_20170216184624_01".</strong> We are going to use this for our second query.
+							  (I wasn't in that one.) The only part we are interested in here is <strong>image:"epic_1b_20170216184624_01".</strong> We are going to use this for our second query.
 							  </p>
 							</div>
 							<br /><br />
@@ -161,17 +161,17 @@
 								  <li>natural (indicated by 1b in the image value)
 								  <li>date (format: 2017/02/16)
 								  <li>png (image type-available in png, jpg and thumbs)
-								  <li>earth (this is a variable I assigned the image value: var earth = response[10].image)
+								  <li>earth (this is a variable I assigned the image value: <code>var earth = response[10].image</code>)
 								  <li>.png (same image type as before)
-								  <li>?api_key= apiKey (as before)
+								  <li>?api_key= apiKey (same as before)
 								</ul>
 							  </p><br />
 							    <code style="margin-left:40px">https://api.nasa.gov/EPIC/archive/natural/2017/02/16/png/"+ earth +".png?api_key=" + apiKey</code><br /><br />
 							  <p>
-							  <p>Below is the same JavaScript request with five new lines of code. We have the earth variable listed above for the image. Now we create an img element 
-							  and assign it to a variable (img.) The image request is assigned as the img source. The image fills the screen, so the size needs to be adjusted with the style attribute.
-							  And finally, we append the image to an element in the document, as I appended the image above.
-							  </p>
+							    <p>Below is the same JavaScript request with five new lines of code. We have the earth variable listed above for the image. Now we create an img element 
+							    and assign it to the img variable. The image request is assigned as the img source. The image fills the screen, so the size needs to be adjusted with the style attribute.
+							    And finally, we append the image to an element in the document, as I appended the image above.
+							    </p>
 							    <pre class="epic">
 								
 		var apiKey = 'my API key'; 
@@ -196,7 +196,7 @@
 		    document.write("Error in network request: " + req.statusText);
 		  }});
 		req.send(null); 
-								</pre>
+							    </pre>
 							  </p>
 							  <p>And that is it! We have our image! If I want to see the other parts of the globe, I just need to change the image value by accessing the response in the
 							  console log. And I can always access another day.

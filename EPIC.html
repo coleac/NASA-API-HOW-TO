@@ -63,7 +63,7 @@
 		req.open('GET', 'https://api.nasa.gov/EPIC/api/natural/date/2017-02-16?api_key=' + apiKey, true);
 								</pre>
 							  <p style="margin-left:40px">An event listener is registered on the request's <code>load</code> event. The request is sent with no additional data <code>request.send(null)</code>. 
-							  If the call is not successful an error message is written. Otherwise, the responseText from the request is parsed and assigned to the response variable, which we then
+							  If the call is not successful an error message is written. Otherwise, the <code>responseText</code> from the request which is returned as a JSON string is parsed to a JavaScript object and assigned to the response variable, which we then
 							  log to the console to determine how to access the data we want.
 							  </p>
 							    <pre class="epic">

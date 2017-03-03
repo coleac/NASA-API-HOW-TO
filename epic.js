@@ -9,7 +9,8 @@ req.addEventListener('load',function(){
     var earth = response[10].image;
     var img = document.createElement("img");
     img.src = "https://api.nasa.gov/EPIC/archive/natural/2017/02/16/png/"+ earth +".png?api_key=" + apiKey;
-    img.style.width='300px';
+    img.style="width:300px;height:300px";
+    img.style.width='300px';// added per image size not altered for MS browser -https://www.w3.org/wiki/Dynamic_style_-_manipulating_CSS_with_JavaScript
     img.style.height='300px';
     document.getElementById("pic").appendChild(img);
   } 

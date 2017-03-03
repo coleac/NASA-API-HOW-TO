@@ -82,8 +82,9 @@
 							</div>
 							<br />
 							  <p>Below is the JavaScript code used for the call to the API:</p>
-							  <p style="margin-left:40px">The code is similar to that for the call to the EPIC API. The differences are the URL and lines 10-34 which include code for a table to display the results. 
-							  We'll discuss the table shortly.</p>
+							  <p style="margin-left:40px">The code is similar to that for the call to the EPIC API. The differences are the URL and the code on lines 10-34 in the callback function. 
+							  This code creates a table to display our results. The elements are all created in JavaScript using <code>document.createElement("element");</code> with the children elements all being appended to their parent, <code>parentElement.appendChild(childElement);</code> and the table element itself being
+							  appended to an element already on the this document: a &lt<div id="table">&qt:  We'll discuss the table cells shortly.</p>
 							    <pre class="epic">
 		
 		var apiKey = 'my API key'; 
